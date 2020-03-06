@@ -11,7 +11,7 @@
             <span>Administrador de Productos</span>
         </div>
     </div> <!-- end breadcrumbs -->
-    
+
     <div class="product-manager-section container">
         <div>
 
@@ -25,7 +25,7 @@
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors as $error)
-                            <li>{{$error}}</li>  
+                            <li>{{$error}}</li>
                         @endforeach
                     </ul>
                 </div>
@@ -44,7 +44,7 @@
                     @foreach ($products as $product)
                         <div class="product-manager-table-row">
                             <div class="product-manager-table-row-left">
-                                <a href="{{ route('product-manager-change.show',$product->id)}}"><img src="{{ asset('/storage/storage/product-img/'.$product->image) }}" alt="item" class="product-manager-table-img"></a> 
+                                <a href="{{ route('product-manager-change.show',$product->id)}}"><img src="{{ asset('/storage/storage/product-img/'.$product->image) }}" alt="item" class="product-manager-table-img"></a>
                             </div>
                             <div class="product-manager-item-details">
                                     <div class="product-manager-table-item"><a href="{{ route('product-manager-change.show',$product->id)}}">{{$product->name}}</a></div>
@@ -63,7 +63,12 @@
                             <div class="product-manager-table-row-center">
                                 {{$product->presentPrice()}}
                             </div>
-                            
+                            <div class="product-manager-table-row-left-center">
+                                @foreach ($product->getCategories() as $category)
+                                    {{$category->name}} 
+                                @endforeach
+                            </div>
+
                             <div class="product-manager-table-row-right">
                                 <div class="product-manager-table-actions">
 
@@ -77,7 +82,7 @@
                                         <button type="submit" class="button-product-manager"><i class="fa fa-trash"></i></button>
                                     </form>
                                 </div>
-                                
+
                             </div>
                         </div> <!-- end cart-table-row -->
                     @endforeach
@@ -94,13 +99,13 @@
                     <a href="{{ url('/') }}" class="button">Volver a Home</a>
                 </div> --}}
 
-                
+
 
             @else
                 <div class="spacer"></div>
                 <a href="{{ url('product-manager-change.index') }}" class="button">Agregar un Item</a>
                 <div class="spacer"></div>
-                <h3 {{--class="alert alert-danger"--}}>No hay Item(s) en el Registro</h3> 
+                <h3 {{--class="alert alert-danger"--}}>No hay Item(s) en el Registro</h3>
                 <div class="spacer"></div>
                 <div class="product-manager-buttons">
                     <a href="{{ url('/') }}" class="button">Volver a Home</a>

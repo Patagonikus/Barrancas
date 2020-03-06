@@ -12,6 +12,11 @@ class Product extends Model
         return $this->belongsToMany("App\Category","category_product","product_id","category_id");
     }
 
+    public function getCategories()
+    {
+       return $this->categories()->where('product_id',$this->id)->get();
+    }
+
     //format price function
     public function presentPrice()
     {

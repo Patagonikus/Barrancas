@@ -25,12 +25,16 @@ Route::get('/crud/product-manager/{product}','ProductManagerChangeController@sho
 Route::post('/crud/product-manager/new','ProductManagerChangeController@create')->name('product-manager-change.create');
 Route::post('/crud/product-manager/{product}','ProductManagerChangeController@update')->name('product-manager-change.update');
 
- 
+
 //Shop Page
 //Route::view('/shop', 'shop');
 
 Route::get('/shop','ShopController@index')->name('shop.index');
 Route::get('/shop/{product}','ShopController@show')->name('shop.show');
+Route::get('/shop/category/{category}','ShopController@filterByCategory')->name('shop.filterByCategory');
+Route::get('/shop/price/minPrice/{minPrice}/maxPrice/{maxPrice}','ShopController@filterByPrice')->name('shop.filterByPrice');
+
+
 
 //Route::view('/product', 'product');
 //Route::view('/cart', 'cart');
@@ -59,3 +63,18 @@ Route::get('/checkout','CheckoutController@index')->name('checkout.index');
 
 
 Route::view('/thankyou', 'thankyou');
+
+//Auth routes
+Auth::routes();
+
+//Logout
+Route::get('/logout', function ()
+{
+    auth()->logout();
+    Session()->flush();
+    return Redirect::to('/');
+})->name('logout');
+
+
+
+Route::get('/home', 'HomeController@index')->name('home');

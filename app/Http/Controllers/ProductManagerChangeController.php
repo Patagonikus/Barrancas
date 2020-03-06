@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use App\Category;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
@@ -43,7 +44,8 @@ class ProductManagerChangeController extends Controller
              'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
              'details'=> 'required|max:50|min:3',
              'price' => 'required|min:0|regex:/^\d*(\.\d{2})?$/',
-             'description'=> 'sometimes|nullable|max:255|min:0'
+             'description'=> 'sometimes|nullable|max:255|min:0',
+             'categories'=>'required|array',
         );
          $messages=array(
              'required' => 'Debe completar el campo :attribute',
@@ -53,7 +55,9 @@ class ProductManagerChangeController extends Controller
              'price.min' => 'El precio del producto no puede ser negativo',
              'image.max' => 'El archivo subido no puede superar los 10MB',
              'image.mimes' => 'Formato de imagen no valido',
-             'name.unique' => 'Ya existe un Producto registrado con este nombre'
+             'name.unique' => 'Ya existe un Producto registrado con este nombre',
+             'categories.required'=>'Seleccione al menos una categoria para el producto',
+             'categories.array'=>'Error en categorias, intente de nuevo',
         );
 
         $validator = Validator::make($req->all(), $rules, $messages);
@@ -82,7 +86,7 @@ class ProductManagerChangeController extends Controller
             $newProduct->description='Sin descripcion disponible';
         }
 
-        $newProduct->user_id=1;
+        $newProduct->user_id=$logUser=Auth::user()->id;
 
         if($req['active']=='visible'){
             $newProduct->active=1;
@@ -90,8 +94,12 @@ class ProductManagerChangeController extends Controller
             $newProduct->active=0;
         }
 
+
         //Save new product in DB
         $newProduct->save();
+
+        //Save relationships with Categories in pivot table in DB
+        $newProduct->categories()->sync($req->categories);
 
         //Return View Product-manager with success message
         return redirect('/crud/product-manager')
@@ -157,7 +165,8 @@ class ProductManagerChangeController extends Controller
             'image' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240',
             'details'=> 'required|max:50|min:3',
             'price' => 'required|min:0|regex:/^\d*(\.\d{2})?$/',
-            'description'=> 'sometimes|nullable|max:255|min:0'
+            'description'=> 'sometimes|nullable|max:255|min:0',
+            'categories'=>'required|array',
        );
         $messages=array(
             'required' => 'Debe completar el campo :attribute',
@@ -167,7 +176,9 @@ class ProductManagerChangeController extends Controller
             'price.min' => 'El precio del producto no puede ser negativo',
             'image.max' => 'El archivo subido no puede superar los 10MB',
             'image.mimes' => 'Formato de imagen no valido',
-            'name.unique' => 'Ya existe un Producto registrado con este nombre'
+            'name.unique' => 'Ya existe un Producto registrado con este nombre',
+            'categories.required'=>'Seleccione al menos una categoria para el producto',
+            'categories.array'=>'Error en categorias, intente de nuevo',
        );
 
         $validator = Validator::make($req->all(), $rules, $messages);
@@ -206,6 +217,9 @@ class ProductManagerChangeController extends Controller
 
         //Save new product in DB
         $editProduct->save();
+
+        //Save relationships with Categories in pivot table in DB
+        $editProduct->categories()->sync($req->categories);
 
         //Return View Product-manager with success message
         return redirect('/crud/product-manager')

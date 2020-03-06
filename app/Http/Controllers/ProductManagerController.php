@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use Illuminate\Http\Request;
+use Auth;
 
 
 class ProductManagerController extends Controller
@@ -15,12 +16,18 @@ class ProductManagerController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(10);
-        $allProducts =Product::all();
-   
 
-        //$products = DB::table('product')->paginate(15);
+        //check who is loged/ return if nobody is loged
+        $logUser=Auth::user();
+        if($logUser==null){
+            return redirect('/login');
+        }
 
+        //return only the products created by this user
+        $products = Product::where('user_id','=',$logUser->id)->paginate(10);
+        $allProducts =Product::where('user_id','=',$logUser->id)->get();
+
+        //return view to product manager
         return view('crud/product-manager')->with([
             'products'=>$products,
             'allProducts'=>$allProducts,
@@ -38,7 +45,7 @@ class ProductManagerController extends Controller
     }
 
         /**
-     * Show the form for creating a new resource.
+     * Make product visible or hidden in shop show display
      *
      * @return \Illuminate\Http\Response
      */

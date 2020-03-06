@@ -46,6 +46,7 @@
                 <p><textarea class="product-manager-change-section-description product-manager-change-input" rows="5" cols="50" name="description">{{$product->description}}</textarea></p>
 
                 
+                <!-- droplist multipicker -->
                 <div class="container">
                     <div class="row">
                         <div class="col-6 col-md-4">
@@ -60,9 +61,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- droplist multipicker -->
-
                 <!-- end droplist multipicker -->
 
 
@@ -114,12 +112,14 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-6 col-md-4">
-                            <label class="product-manager-change-multipicker">Seleccione Categoria(s)</label>
-                            <select class="selectpicker  form-control" multiple>
-                                @foreach ($categories as $category)
-                                    <option>{{$category->name}}</option>
-                                @endforeach
-                          </select>
+                            <label >Seleccione Categoria(s) : </label>
+                                {!! Multiselect::select(
+                                    'categories', 
+                                    $categories->pluck('name', 'id'),
+                                    isset($product) ? $product->categories()->pluck('id') : [], 
+                                    ['placeholder' => 'Elija una o más categorias'],
+                                    ['class' => 'select-class multiselect'],
+                                ) !!}
                         </div>
                     </div>
                 </div>
